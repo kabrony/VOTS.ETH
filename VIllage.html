@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skateboard Art Collage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/three@0.126.1/build/three.min.js"></script>
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .highlighted {
+            animation: spin 0.5s ease-in-out;
+            transform: scale(1.1);
+        }
+
+        .heading-text {
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0, 0 0 70px #0f0, 0 0 80px #0f0, 0 0 100px #0f0, 0 0 150px #0f0;
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <header class="flex justify-center items-center p-4">
+        <div id="logo" class="text-4xl font-bold cursor-pointer">VOT</div>
+    </header>
+
+    <main class="p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Dynamically generated image collage -->
+            <script>
+                const images = [];
+                for (let i = 0; i < 16; i++) {
+                    images.push(`https://source.unsplash.com/random/400x400?sig=${i}&skateboard,punk`);
+                }
+
+                window.onload = () => {
+                    const collage = document.querySelector('.grid');
+                    images.forEach(src => {
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.className = 'w-full h-auto rounded shadow-lg transform transition duration-500 hover:scale-110';
+                        img.onmouseover = () => img.classList.add('highlighted');
+                        img.onmouseout = () => img.classList.remove('highlighted');
+                        collage.appendChild(img);
+                    });
+                };
+            </script>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 w-full p-4">
+        <div class="text-center heading-text">Skateboard Art Collage</div>
+    </footer>
+
+    <script>
+        document.getElementById('logo').onmouseover = function() {
+            this.classList.add('highlighted');
+        };
+        document.getElementById('logo').onmouseout = function() {
+            this.classList.remove('highlighted');
+        };
+
+        // Three.js skateboard animation
+        let scene, camera, renderer, skateboard;
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const geometry = new THREE.BoxGeometry(1, 0.2, 0.5);
+            const material = new THREE.MeshBasicMaterial({ color: 0x555555 });
+            skateboard = new THREE.Mesh(geometry, material);
+            scene.add(skateboard);
+
+            camera.position.z = 5;
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            skateboard.rotation.x += 0.01;
+            skateboard.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+
+        initThreeJS();
+    </script>
+
+</body>
+</html>
